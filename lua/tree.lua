@@ -1,4 +1,4 @@
---#!/usr/local/bin/lua
+#!/usr/local/bin/lua
 --repository: https://github.com/trumanzhao/misc
 --trumanzhao, 2016/08/03, trumanzhao@foxmail.com
 --[[
@@ -89,4 +89,5 @@ function log_tree(desc, var)
         print(line);
     end
 end
+
 
