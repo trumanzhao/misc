@@ -16,6 +16,8 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE pre_instance, char* cmd_line, i
 	GdiplusStartupInput gdiplus_startup_input;
 	GdiplusStartup(&gdiplus_token, &gdiplus_startup_input, nullptr);
 
+	g_app = new winbox();
+
 	WNDCLASSEX  wcex;
 	char window_class[] = "paint";
 
@@ -37,9 +39,6 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE pre_instance, char* cmd_line, i
 	HWND hwnd = CreateWindowEx(WS_EX_OVERLAPPEDWINDOW, window_class, "paint", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr, instance, nullptr);
 	if (hwnd == nullptr)
 		return 0;
-
-	g_app = new winbox(hwnd);
-	g_app->setup();
 
 	ShowWindow(hwnd, cmd_show);
 	UpdateWindow(hwnd);
@@ -73,6 +72,10 @@ LRESULT CALLBACK win_proc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
 		break;
 
 	case WM_ERASEBKGND:
+		return 0;
+
+	case WM_CREATE:
+		g_app->on_create(hwnd);
 		return 0;
 
 	case WM_DESTROY:
