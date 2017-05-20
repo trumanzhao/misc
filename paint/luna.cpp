@@ -65,9 +65,8 @@ bool lua_get_table_function(lua_State* L, const char table[], const char functio
 bool lua_call_function(std::string& err, lua_State* L, int arg_count, int ret_count)
 {
     int func_idx = lua_gettop(L) - arg_count;
-    // 由于经常需要"如果存在则调用",所以如果函数不存在,也不当着错误
     if (func_idx <= 0 || !lua_isfunction(L, func_idx))
-        return true;
+        return false;
 
     lua_getglobal(L, "debug");
     lua_getfield(L, -1, "traceback");

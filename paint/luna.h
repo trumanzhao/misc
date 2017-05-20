@@ -588,7 +588,13 @@ void lua_register_function(lua_State* L, const char* name, T func)
     lua_setglobal(L, name);
 }
 
-// get function from global table
+
+inline bool lua_get_global_function(lua_State* L, const char function[])
+{
+    lua_getglobal(L, function);
+    return lua_isfunction(L, -1);
+}
+
 bool lua_get_table_function(lua_State* L, const char table[], const char function[]);
 
 template <typename T>
@@ -602,8 +608,6 @@ bool lua_get_object_function(lua_State* L, T* object, const char function[])
     return lua_isfunction(L, -1);
 }
 
-bool lua_call_function(std::string& err, lua_State* L, int arg_count, int ret_count);
-
 template<size_t... Integers, typename... var_types>
 void lua_to_native_mutil(lua_State* L, std::tuple<var_types&...>& vars, std::index_sequence<Integers...>&&)
 {
@@ -611,11 +615,24 @@ void lua_to_native_mutil(lua_State* L, std::tuple<var_types&...>& vars, std::ind
     int _[] = { 0, (std::get<Integers>(vars) = lua_to_native<var_types>(L, (int)Integers - ret_count), 0)... };
 }
 
+bool lua_call_function(std::string& err, lua_State* L, int arg_count, int ret_count);
+
+template <typename... ret_types, typename... arg_types>
+bool lua_call_function(std::string& err, lua_State* L, std::tuple<ret_types&...>&& rets, arg_types... args)
+{
+    int _[] = { 0, (native_to_lua(L, args), 0)... };
+    constexpr int ret_count = sizeof...(ret_types);
+    if (!lua_call_function(err, L, sizeof...(arg_types), ret_count))
+        return false;
+    lua_to_native_mutil(L, rets, std::make_index_sequence<ret_count>());
+    return true;
+}
+
 template <typename... ret_types, typename... arg_types>
 bool lua_call_table_function(std::string& err, lua_State* L, const char table[], const char function[], std::tuple<ret_types&...>&& rets, arg_types... args)
 {
     lua_get_table_function(L, table, function);
-    int _0[] = { 0, (native_to_lua(L, args), 0)... };
+    int _[] = { 0, (native_to_lua(L, args), 0)... };
     constexpr int ret_count = sizeof...(ret_types);
     if (!lua_call_function(err, L, sizeof...(arg_types), ret_count))
         return false;
@@ -627,7 +644,7 @@ template <typename T, typename... ret_types, typename... arg_types>
 bool lua_call_object_function(std::string& err, lua_State* L, T* o, const char function[], std::tuple<ret_types&...>&& rets, arg_types... args)
 {
     lua_get_object_function(L, o, function);
-    int _0[] = { 0, (native_to_lua(L, args), 0)... };
+    int _[] = { 0, (native_to_lua(L, args), 0)... };
     constexpr int ret_count = sizeof...(ret_types);
     if (!lua_call_function(err, L, sizeof...(arg_types), ret_count))
         return false;
@@ -639,7 +656,7 @@ template <typename... ret_types, typename... arg_types>
 bool lua_call_global_function(std::string& err, lua_State* L, const char function[], std::tuple<ret_types&...>&& rets, arg_types... args)
 {
     lua_getglobal(L, function);
-    int _0[] = { 0, (native_to_lua(L, args), 0)... };
+    int _[] = { 0, (native_to_lua(L, args), 0)... };
     constexpr int ret_count = sizeof...(ret_types);
     if (!lua_call_function(err, L, sizeof...(arg_types), ret_count))
         return false;
