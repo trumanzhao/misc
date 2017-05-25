@@ -62,6 +62,7 @@ private:
 
 	HWND m_hwnd = nullptr;
 	lua_State* m_lvm = nullptr;
+	int m_frame = 0;
 	float m_width = 0;
 	float m_height = 0;
 	Gdiplus::Graphics* m_graphics = nullptr;
