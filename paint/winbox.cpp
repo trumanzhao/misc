@@ -246,7 +246,7 @@ Gdiplus::PointF winbox::get_point(lua_State* L, int idx)
 		lua_pop(L, 1);
 
 		lua_geti(L, idx, 2);
-		x = (float)lua_tonumber(L, -1);
+		y = (float)lua_tonumber(L, -1);
 		lua_pop(L, 1);
 	}
 	else
