@@ -208,7 +208,7 @@ void winbox::draw_text_lines()
 	Gdiplus::SolidBrush brush(m_log_back_color);
 	m_graphics->FillRectangle(&brush, m_log_box);
 
-	Gdiplus::Font font(L"宋体", 12);
+	Gdiplus::Font font(L"瀹嬩綋", 12);
 	Gdiplus::StringFormat format;
 	
 	format.SetAlignment(Gdiplus::StringAlignment::StringAlignmentNear);
@@ -233,7 +233,7 @@ void winbox::draw_text_lines()
 	m_graphics->DrawRectangle(&pen, m_log_box);
 }
 
-// 支持{x=1,y=2}格式,也支持{x,y}格式
+// 鏀寔{x=1,y=2}鏍煎紡,涔熸敮鎸亄x,y}鏍煎紡
 Gdiplus::PointF winbox::get_point(lua_State* L, int idx)
 {
 	lua_guard g(L);
@@ -262,7 +262,7 @@ Gdiplus::PointF winbox::get_point(lua_State* L, int idx)
 
 	logic_to_window(x, y);
 
-	return Gdiplus::PointF(x, m_height - y - 1);
+	return Gdiplus::PointF(x, y);
 }
 
 Gdiplus::Color winbox::get_color(lua_State* L, int idx)
