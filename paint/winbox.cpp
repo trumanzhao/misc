@@ -33,6 +33,7 @@ EXPORT_LUA_FUNCTION(set_log_edge_color)
 EXPORT_LUA_FUNCTION(set_log_err_color)
 EXPORT_LUA_FUNCTION(set_log_txt_color)
 EXPORT_LUA_FUNCTION(log_clear)
+EXPORT_LUA_INT(m_frame)
 EXPORT_CLASS_END()
 
 time_t get_file_time(const char* file_name)
@@ -117,6 +118,7 @@ void winbox::on_size(int w, int h)
 
 void winbox::on_timer()
 {
+	m_frame++;
 	time_t filetime = get_file_time(g_entry);
 	if (filetime != m_entry_time)
 	{
@@ -216,6 +218,7 @@ void winbox::draw_text_lines()
 
 	float line_pos = m_log_box.GetBottom();
 	float fontHeight = font.GetHeight(m_graphics) + 3;
+	m_graphics->SetClip(m_log_box);
 	for (auto it = m_lines.begin(); it != m_lines.end(); ++it)
 	{
 		if (line_pos < m_log_box.Y)
@@ -228,6 +231,7 @@ void winbox::draw_text_lines()
 		m_graphics->DrawString(it->ws.c_str(), (int)it->ws.size(), &font, rect, &format, &brush);
 		line_pos -= fontHeight;
 	}
+	m_graphics->ResetClip();
 
 	Gdiplus::Pen pen(m_log_edge_color);
 	m_graphics->DrawRectangle(&pen, m_log_box);
