@@ -487,8 +487,7 @@ struct msg_archiver
     {
         char* buffer = &m_buffer[0];
         size_t buffer_size = m_buffer.size();
-        bool rets[] = { io_save(buffer, buffer_size, args)... };
-        if (std::all_of(std::begin(rets), std::end(rets), [](auto e) { return e; }))
+        if ((io_save(buffer, buffer_size, args) && ...))
         {
             data_len = (size_t)(m_buffer.size() - buffer_size);
             return &m_buffer[0];
