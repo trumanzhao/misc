@@ -19,7 +19,7 @@ CC = gcc
 CXX = g++
 CFLAGS = -m64
 
-CXXFLAGS = $(CFLAGS) -Wno-invalid-offsetof -Wno-deprecated-declarations -std=c++1y
+CXXFLAGS = $(CFLAGS) -Wno-invalid-offsetof -Wno-deprecated-declarations -std=c++1z
 
 #----------------- 下面部分通常不用改 --------------------------
 

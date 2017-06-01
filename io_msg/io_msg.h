@@ -557,8 +557,7 @@ struct msg_dispatcher : msg_table<typename std::decay<T>::type>
     static bool invoke(const char*& data, size_t& data_len, void(*func)(arg_types...), std::index_sequence<Integers...>&&)
     {
         std::tuple<typename std::decay<arg_types>::type...> vars;
-        bool rets[] = { true, io_load(data, data_len, std::get<Integers>(vars))... };
-        if (data_len == 0 && std::all_of(std::begin(rets), std::end(rets), [](auto e) {return e;}))
+        if((io_load(data, data_len, std::get<Integers>(vars)) && ...) && data_len == 0)
         {
             (*func)(std::get<Integers>(vars)...);
             return true;
@@ -570,8 +569,7 @@ struct msg_dispatcher : msg_table<typename std::decay<T>::type>
     static bool invoke(const char*& data, size_t& data_len, void(class_type::*func)(arg_types...), class_type* object, std::index_sequence<Integers...>&&)
     {
         std::tuple<typename std::decay<arg_types>::type...> vars;
-        bool rets[] = { true, io_load(data, data_len, std::get<Integers>(vars))... };
-        if (data_len == 0 && std::all_of(std::begin(rets), std::end(rets), [](auto e) {return e;}))
+        if ((io_load(data, data_len, std::get<Integers>(vars)) && ...) && data_len == 0)
         {
             (object->*func)(std::get<Integers>(vars)...);
             return true;
@@ -579,3 +577,5 @@ struct msg_dispatcher : msg_table<typename std::decay<T>::type>
         return false;
     }
 };
+
+
