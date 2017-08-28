@@ -33,6 +33,7 @@ EXPORT_LUA_FUNCTION(set_log_edge_color)
 EXPORT_LUA_FUNCTION(set_log_err_color)
 EXPORT_LUA_FUNCTION(set_log_txt_color)
 EXPORT_LUA_FUNCTION(log_clear)
+EXPORT_LUA_INT(m_frame)
 EXPORT_CLASS_END()
 
 time_t get_file_time(const char* file_name)
@@ -117,6 +118,7 @@ void winbox::on_size(int w, int h)
 
 void winbox::on_timer()
 {
+	m_frame++;
 	time_t filetime = get_file_time(g_entry);
 	if (filetime != m_entry_time)
 	{
@@ -208,7 +210,7 @@ void winbox::draw_text_lines()
 	Gdiplus::SolidBrush brush(m_log_back_color);
 	m_graphics->FillRectangle(&brush, m_log_box);
 
-	Gdiplus::Font font(L"宋体", 12);
+	Gdiplus::Font font(L"瀹嬩綋", 12);
 	Gdiplus::StringFormat format;
 	
 	format.SetAlignment(Gdiplus::StringAlignment::StringAlignmentNear);
@@ -216,6 +218,7 @@ void winbox::draw_text_lines()
 
 	float line_pos = m_log_box.GetBottom();
 	float fontHeight = font.GetHeight(m_graphics) + 3;
+	m_graphics->SetClip(m_log_box);
 	for (auto it = m_lines.begin(); it != m_lines.end(); ++it)
 	{
 		if (line_pos < m_log_box.Y)
@@ -228,12 +231,13 @@ void winbox::draw_text_lines()
 		m_graphics->DrawString(it->ws.c_str(), (int)it->ws.size(), &font, rect, &format, &brush);
 		line_pos -= fontHeight;
 	}
+	m_graphics->ResetClip();
 
 	Gdiplus::Pen pen(m_log_edge_color);
 	m_graphics->DrawRectangle(&pen, m_log_box);
 }
 
-// 支持{x=1,y=2}格式,也支持{x,y}格式
+// 鏀寔{x=1,y=2}鏍煎紡,涔熸敮鎸亄x,y}鏍煎紡
 Gdiplus::PointF winbox::get_point(lua_State* L, int idx)
 {
 	lua_guard g(L);
@@ -246,7 +250,7 @@ Gdiplus::PointF winbox::get_point(lua_State* L, int idx)
 		lua_pop(L, 1);
 
 		lua_geti(L, idx, 2);
-		x = (float)lua_tonumber(L, -1);
+		y = (float)lua_tonumber(L, -1);
 		lua_pop(L, 1);
 	}
 	else
@@ -262,7 +266,7 @@ Gdiplus::PointF winbox::get_point(lua_State* L, int idx)
 
 	logic_to_window(x, y);
 
-	return Gdiplus::PointF(x, m_height - y - 1);
+	return Gdiplus::PointF(x, y);
 }
 
 Gdiplus::Color winbox::get_color(lua_State* L, int idx)
