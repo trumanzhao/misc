@@ -36,7 +36,8 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE pre_instance, char* cmd_line, i
 
 	RegisterClassEx(&wcex);
 
-	HWND hwnd = CreateWindowEx(WS_EX_OVERLAPPEDWINDOW, window_class, "paint", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr, instance, nullptr);
+	HWND hwnd = CreateWindowEx(WS_EX_OVERLAPPEDWINDOW | WS_EX_TOPMOST, window_class, "paint", WS_OVERLAPPEDWINDOW, 
+		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr, instance, nullptr);
 	if (hwnd == nullptr)
 		return 0;
 

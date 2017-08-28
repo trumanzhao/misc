@@ -1,6 +1,8 @@
 --绘制蜂巢标志: 三个六边形
 
-polygon_size = 64;
+require("gdi");
+
+polygon_size = polygon_size or 64;
 
 function make_polygon(arc, cx, cy)
     local polygon = {fill_points={}, edge_points={}};
@@ -36,12 +38,12 @@ function window.on_size(w, h)
 end
 
 polygons = {};
+rotate_base = rotate_base or 210; --第一个六边形中心的偏离X轴的角度
 function build_polygons()
     polygons = {};
     local polygon_colors = {0xff770000, 0xff007700, 0xff000077};
     for i = 1, 3 do
         local distance = polygon_size + 2; --六边形中心到世界中心的距离
-        local rotate_base = 210; --第一个六边形中心的偏离X轴的角度
         local center_agc = math.rad(rotate_base) + math.rad(120) * (i - 1);
         local cx = centerx + distance * math.cos(center_agc);
         local cy = centery + distance * math.sin(center_agc);
@@ -53,8 +55,10 @@ end
 
 build_polygons();
 
-window.set_back_color(0xffffffff);
+--window.set_back_color(0xff777777);
+window.set_back_color(0xff000000);
 function window.on_draw()
+    window.set_smoothing_mode(SmoothingMode.SmoothingModeAntiAlias);
     window.set_line_width(2);
     window.set_line_color(0xffcccccc);
 
@@ -66,4 +70,9 @@ function window.on_draw()
 end
 
 function window.on_timer()
+    rotate_base = (rotate_base + 1) % 360;
+
+    local rad = math.rad(rotate_base);
+    polygon_size = 64 + math.sin(rad) * 32;
+    build_polygons();
 end

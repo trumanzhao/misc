@@ -7,7 +7,7 @@
 #include "winbox.h"
 
 winbox* g_app = nullptr;
-static const char* g_entry = "main.lua";
+static const char* g_entry = "hive.lua";
 
 EXPORT_CLASS_BEGIN(winbox)
 EXPORT_LUA_FUNCTION(set_smoothing_mode)
