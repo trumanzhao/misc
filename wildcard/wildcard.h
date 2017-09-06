@@ -1,3 +1,8 @@
+/*
+** repository: https://github.com/trumanzhao/misc.git
+** trumanzhao, 2017-09-07, trumanzhao@foxmail.com
+*/
+
 #pragma once
 
 template <typename char_type>
@@ -43,18 +48,18 @@ bool wildcard_replace(char_type* text, const char_type* pattern, int& replace_co
 
     if (*pattern == *text)
     {
-		if (*text == '\0')
-		{
-			replace_count = 0;
-			return true;
-		}
+        if (*text == '\0')
+        {
+            replace_count = 0;
+            return true;
+        }
 
-		if (wildcard_replace(text + 1, pattern + 1, replace_count, replace_char))
-		{
-			*text = replace_char;
-			++replace_count;
-			return true;
-		}
+        if (wildcard_replace(text + 1, pattern + 1, replace_count, replace_char))
+        {
+            *text = replace_char;
+            ++replace_count;
+            return true;
+        }
     }
 
     return false;
