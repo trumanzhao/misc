@@ -1,15 +1,15 @@
-product = mytarget
+product = test
 # execute, dynamic_shared, static_shared
 target_type = dynamic_shared
 define_macros =
 include_dir = .
 # 依赖库列表,空格分开
-lib =
+lib = lua
 # 最终产品目录:
 # 注意,只是对可执行文件和动态库而言,静态库忽略此项
 target_dir = .
 # 源码目录,注意不会递归
-src_dir_list = src lz4
+src_dir_list = .
 # 依赖库目录,多个目录用空格分开:
 lib_dir =
 # 本工程(如果)输出.a,.so文件的目录,比如: ./lib
@@ -114,39 +114,40 @@ debug: build_prompt $(target)
 
 .PHONY: clean
 clean:
-        @echo rm "*.o" ...
-        @rm -f $(clear_o_list)
-        @echo rm "*.d" ...
-        @rm -f $(clear_d_list)
+	@echo rm "*.o" ...
+	@rm -f $(clear_o_list)
+	@echo rm "*.d" ...
+	@rm -f $(clear_d_list)
 
 .PHONY: build_prompt
 build_prompt:
-        @echo build $(product) $(the_goal) ...
-        @echo cflags=$(CFLAGS) ...
-        @echo c++flags=$(CXXFLAGS) ...
-        @echo includes=$(include_dir)
-        @echo defines=$(define_macros)
-        @echo lib_dir=$(lib_dir)
-        @echo libs=$(lib)
+	@echo build $(product) $(the_goal) ...
+	@echo cflags=$(CFLAGS) ...
+	@echo c++flags=$(CXXFLAGS) ...
+	@echo includes=$(include_dir)
+	@echo defines=$(define_macros)
+	@echo lib_dir=$(lib_dir)
+	@echo libs=$(lib)
 
 -include ${make_c2o_list:.o=.d} ${make_cpp2o_list:.o=.d}
 %.c.o: %.c
-        $(comp_c_echo)
-        @$(CC) $(CFLAGS) $(env_param) -MM -MT $@ -MF $(@:.o=.d) $<
-        @$(CC) $(CFLAGS) $(env_param) -c -o $@ $<
+	$(comp_c_echo)
+	@$(CC) $(CFLAGS) $(env_param) -MM -MT $@ -MF $(@:.o=.d) $<
+	@$(CC) $(CFLAGS) $(env_param) -c -o $@ $<
 
 %.cpp.o: %.cpp
-        $(comp_cxx_echo)
-        @$(CXX) $(CXXFLAGS) $(env_param) -MM -MT $@ -MF $(@:.o=.d) $<
-        @$(CXX) $(CXXFLAGS) $(env_param) -c -o $@ $<
+	$(comp_cxx_echo)
+	@$(CXX) $(CXXFLAGS) $(env_param) -MM -MT $@ -MF $(@:.o=.d) $<
+	@$(CXX) $(CXXFLAGS) $(env_param) -c -o $@ $<
 
 $(target): $(make_c2o_list) $(make_cpp2o_list) | $(target_dir) $(lib_out)
-        @echo link "-->" $@
-        @$(link)
-        $(after_link)
+	@echo link "-->" $@
+	@$(link)
+	$(after_link)
 
 $(target_dir):
-        mkdir $(target_dir)
+	mkdir $(target_dir)
 
 $(lib_out):
-        mkdir $(lib_out)
+	mkdir $(lib_out)
+
