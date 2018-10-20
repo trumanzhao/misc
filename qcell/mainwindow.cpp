@@ -1,6 +1,7 @@
 #include <QPainter>
 #include <QTimer>
 #include <QResizeEvent>
+#include <QStyleOption>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -8,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
     srand(static_cast<unsigned>(time(nullptr)));
     resize(1239, 720);
+    setStyleSheet("background-color:black;");
 
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(onTimer()));
@@ -89,10 +91,10 @@ void MainWindow::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
 
-    painter.setPen(QPen(m_Freeze ? QColor(0, 180, 180) : QColor(180, 180, 180), 1));
+    painter.setPen(QPen(m_Freeze ? QColor(80, 80, 0) : QColor(50, 50, 50), 1));
     painter.drawLines(m_Grids);
 
-    QBrush brush(QColor(0, 180, 0));
+    QBrush brush(m_Freeze ? QColor(100, 100, 100) : QColor(0, 120, 0));
 
     int xcount = m_CellMgr.getWidth();
     int ycount = m_CellMgr.getHeight();
