@@ -1,19 +1,19 @@
 product = test
 # execute, dynamic_shared, static_shared
-target_type = dynamic_shared
+target_type = execute
 define_macros =
-include_dir = .
+include_dir = ../luna
 # 依赖库列表,空格分开
-lib = lua
+lib = lua luna dl
 # 最终产品目录:
 # 注意,只是对可执行文件和动态库而言,静态库忽略此项
 target_dir = .
 # 源码目录,注意不会递归
 src_dir_list = .
-# 依赖库目录,多个目录用空格分开:
-lib_dir =
-# 本工程(如果)输出.a,.so文件的目录,比如: ./lib
-lib_out = .
+# 依赖库目录,多个目录用空格分开
+lib_dir = ../luna
+# 安装目录,可以写多个,也可以留空
+install_dir = ../bin
 
 CC = gcc
 CXX = g++
@@ -46,9 +46,6 @@ link_flags = -shared -ldl -fPIC -lpthread
 ifeq ($(OS), Darwin)
 link_flags += -undefined dynamic_lookup
 endif
-ifneq ($(lib_out), )
-after_link = cp -f $@ $(lib_out)/
-endif
 endif
 
 ifeq ($(target_type), static_shared)
@@ -56,16 +53,18 @@ link_flags =
 endif
 
 ifeq ($(target_type), execute)
-target = $(target_dir)/$(product)
+target_filename = $(product)
 endif
 
 ifeq ($(target_type), dynamic_shared)
-target  = $(target_dir)/$(product).so
+target_filename  = lib$(product).so
 endif
 
 ifeq ($(target_type), static_shared)
-target  = $(lib_out)/lib$(product).a
+target_filename  = lib$(product).a
 endif
+
+target = $(target_dir)/$(target_filename)
 
 # exe and .so
 ifneq ($(target_type), static_shared)
@@ -77,7 +76,7 @@ ifeq ($(target_type), static_shared)
 link = ar cr $@ $^ $(link_flags)
 endif
 
-the_goal = debug
+the_goal = release
 ifneq ($(MAKECMDGOALS),)
 the_goal = $(MAKECMDGOALS)
 endif
@@ -102,6 +101,7 @@ clear_d_list := $(wildcard $(clear_d_pattern))
 make_c2o_list := $(patsubst %.c, %.c.o, $(make_c_list))
 make_cpp2o_list := $(patsubst %.cpp, %.cpp.o, $(make_cpp_list))
 env_param := $(include_dir:%=-I%) $(define_macros:%=-D%)
+install_target := $(install_dir:%=%/$(target_filename))
 
 comp_c_echo = @echo gcc $< ...
 comp_cxx_echo = @echo g++ $< ...
@@ -118,6 +118,11 @@ clean:
 	@rm -f $(clear_o_list)
 	@echo rm "*.d" ...
 	@rm -f $(clear_d_list)
+	@echo rm $(target)
+	@rm -f $(target)
+
+.PHONY: install
+install: $(install_dir) $(install_target)
 
 .PHONY: build_prompt
 build_prompt:
@@ -140,14 +145,18 @@ build_prompt:
 	@$(CXX) $(CXXFLAGS) $(env_param) -MM -MT $@ -MF $(@:.o=.d) $<
 	@$(CXX) $(CXXFLAGS) $(env_param) -c -o $@ $<
 
-$(target): $(make_c2o_list) $(make_cpp2o_list) | $(target_dir) $(lib_out)
+$(target): $(make_c2o_list) $(make_cpp2o_list) | $(target_dir) 
 	@echo link "-->" $@
 	@$(link)
 	$(after_link)
 
+$(install_target): $(target)
+	@echo install "-->" $@
+	cp -f $(target) $@
+
 $(target_dir):
 	mkdir $(target_dir)
 
-$(lib_out):
-	mkdir $(lib_out)
+$(install_dir):
+	mkdir $@
 
