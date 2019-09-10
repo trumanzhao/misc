@@ -1,9 +1,9 @@
+#include <time.h>
 #include <QPainter>
 #include <QTimer>
 #include <QResizeEvent>
 #include <QStyleOption>
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
