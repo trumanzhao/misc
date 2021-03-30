@@ -13,11 +13,11 @@ log_tree("player_data", player);
 --]]
 
 local function var2string(var)
-	local text = tostring(var);
-	text = string.gsub(text, "\r", "\\r");
-	text = string.gsub(text, "\n", "\\n");
-	text = string.gsub(text, "%c", "\\^");
-	return text;
+    local text = tostring(var);
+    text = string.gsub(text, "\r", "\\r");
+    text = string.gsub(text, "\n", "\\n");
+    text = string.gsub(text, "%c", "\\^");
+    return text;
 end
 
 local function tab2string(visited, path, base, tab)
@@ -39,14 +39,14 @@ local function tab2string(visited, path, base, tab)
 
     local lines = {};
     local idx = 1;
-	for k, v in pairs(tab) do
+    for k, v in pairs(tab) do
         local vtype = type(v);
         local header = base..(idx < size and "├─ " or "└─ ")..var2string(k);
         if vtype == "table" then
-        	local vpath = visited[v];
-        	if vpath then
-        		lines[#lines + 1] = header..": "..vpath;
-        	else
+            local vpath = visited[v];
+            if vpath then
+            lines[#lines + 1] = header..": "..vpath;
+            else
                 local out = tab2string(visited, path.."/"..var2string(k), base..(idx < size and "│  " or "   "), v);
                 if type(out) == "string" then
                     lines[#lines + 1] = header..": "..out;
@@ -65,7 +65,7 @@ local function tab2string(visited, path, base, tab)
             lines[#lines + 1] = header..": "..txt;
         end
         idx = idx + 1;
-	end
+    end
 
     return lines;
 end
@@ -89,5 +89,4 @@ function log_tree(desc, var)
         print(line);
     end
 end
-
 
