@@ -45,7 +45,7 @@ local function tab2string(visited, path, base, tab)
         if vtype == "table" then
             local vpath = visited[v];
             if vpath then
-            lines[#lines + 1] = header..": "..vpath;
+                lines[#lines + 1] = header..": "..vpath;
             else
                 local out = tab2string(visited, path.."/"..var2string(k), base..(idx < size and "│  " or "   "), v);
                 if type(out) == "string" then
