@@ -26,9 +26,9 @@ local function tab2string(visited, path, base, tab)
         return pre;
     end
 
-	visited[tab] = path;
+    visited[tab] = path;
 
-	local size = 0;
+    local size = 0;
     for k, v in pairs(tab) do
         size = size + 1;
     end
